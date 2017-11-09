@@ -43011,8 +43011,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 group: 'notifications',
                 title: 'SUCCESS!',
                 text: '<i class="fa fa-check"></i>' + message,
-                type: 'success',
-                width: '100%'
+                type: 'success'
             });
         },
         selectedProject: function selectedProject(index) {

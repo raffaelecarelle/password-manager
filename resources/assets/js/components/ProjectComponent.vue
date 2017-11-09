@@ -258,8 +258,7 @@
                     group: 'notifications',
                     title: 'SUCCESS!',
                     text: '<i class="fa fa-check"></i>' + message,
-                    type: 'success',
-                    width: '100%'
+                    type: 'success'
                 });
             }
             ,

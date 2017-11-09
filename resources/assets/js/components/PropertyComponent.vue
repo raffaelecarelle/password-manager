@@ -7,7 +7,7 @@
                 <hr class="mt0 mb0">
             </div>
         </div>
-  
+
         <!-- Modal Create -->
         <div class="modal fade" tabindex="-1" role="dialog" id="add_property_model">
             <div class="modal-dialog" role="document">

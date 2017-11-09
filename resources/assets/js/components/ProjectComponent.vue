@@ -18,25 +18,26 @@
                                 <a class="btn btn-primary" href="#" data-toggle="modal"
                                    data-target="#add_project_model"><i class="icon-plus"></i></a>
                                 <a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_project_model"
-                                   v-bind:class="{disabled: disableButton}"><i class="icon-pencil"></i></a>
+                                   v-bind:class="{disabled: disableButtonProject}"><i class="icon-pencil"></i></a>
                                 <a class="btn btn-danger" href="#" @click="deleteProject()"
-                                   v-bind:class="{disabled: disableButton}"><i class="icon-remove"></i></a>
+                                   v-bind:class="{disabled: disableButtonProject}"><i class="icon-remove"></i></a>
                             </div>
-                            <div class="col-sm-4" v-if="Object.keys(this.properties).length  > 0">
+                            <div class="col-sm-4" v-if="Object.keys(this.update_project).length  > 0">
                                 <a class="btn btn-primary" href="#" data-toggle="modal"
-                                   data-target="#add_project_model"><i class="icon-plus"></i></a>
-                                <a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_project_model"
-                                   v-bind:class="{disabled: disableButton}"><i class="icon-pencil"></i></a>
-                                <a class="btn btn-danger" href="#" @click="deleteProject()"
-                                   v-bind:class="{disabled: disableButton}"><i class="icon-remove"></i></a>
+                                   data-target="#add_property_model"><i class="icon-plus"></i></a>
+                                <a class="btn btn-info" href="#" data-toggle="modal"
+                                   data-target="#update_property_model"
+                                   v-bind:class="{disabled: disableButtonProperty}"><i class="icon-pencil"></i></a>
+                                <a class="btn btn-danger" href="#" @click="initDeleteProperty()"
+                                   v-bind:class="{disabled: disableButtonProperty}"><i class="icon-remove"></i></a>
                             </div>
                             <div class="col-sm-4" v-if="false">
                                 <a class="btn btn-primary" href="#" data-toggle="modal"
                                    data-target="#add_project_model"><i class="icon-plus"></i></a>
                                 <a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_project_model"
-                                   v-bind:class="{disabled: disableButton}"><i class="icon-pencil"></i></a>
+                                   v-bind:class="{disabled: disableButtonCredential}"><i class="icon-pencil"></i></a>
                                 <a class="btn btn-danger" href="#" @click="deleteProject()"
-                                   v-bind:class="{disabled: disableButton}"><i class="icon-remove"></i></a>
+                                   v-bind:class="{disabled: disableButtonCredential}"><i class="icon-remove"></i></a>
                             </div>
                         </div>
                     </div>
@@ -55,7 +56,7 @@
                             </div>
 
                             <div class="col-sm-8">
-                                <properties :properties="this.properties"></properties>
+                                <properties ref="properties" :properties="this.properties"></properties>
                             </div>
 
                         </div>
@@ -63,7 +64,7 @@
                 </div>
             </div>
 
-            <!-- Modal Create -->
+            <!-- Modal project Create -->
             <div class="modal fade" tabindex="-1" role="dialog" id="add_project_model">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -98,14 +99,14 @@
                 </div><!-- /.modal-dialog -->
             </div><!-- /.modal -->
 
-            <!-- Modal Update -->
+            <!-- Modal project Update -->
             <div class="modal fade" tabindex="-1" role="dialog" id="update_project_model">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                     aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title">Modifica il progetto: {{update_project.name}}</h4>
+                            <h4 class="modal-title">Modifica il progetto</h4>
                         </div>
                         <div class="modal-body">
 
@@ -138,12 +139,7 @@
 </template>
 
 <script>
-    import Property from './PropertyComponent.vue';
-
     export default {
-
-        components: {Property},
-
         data() {
             return {
                 project: {
@@ -160,9 +156,12 @@
             }
         },
         computed: {
-            disableButton: function () {
+            disableButtonProject: function () {
                 return Object.keys(this.update_project).length == 0
             },
+            disableButtonProperty: function () {
+                return Object.keys(this.$refs.properties.update_property).length == 0
+            }
         },
         methods: {
             isActive(projectId) {
@@ -230,10 +229,13 @@
             reset() {
                 this.update_project = [];
                 this.update_project_index = "";
+                this.$refs.properties.update_property = [];
+                this.$refs.properties.update_property_index = "";
                 this.project.name = '';
                 this.project.description = '';
             },
             selectedProject(index) {
+                this.reset();
                 this.initSelectProject(index);
                 this.getProperties(this.update_project.id);
             },
@@ -249,6 +251,9 @@
                     this.reset();
                     response.error ? this.errors = response.error : this.projects = response.data.projects;
                 });
+            },
+            initDeleteProperty() {
+                return this.$refs.properties.deleteProperty();
             }
         }
     }

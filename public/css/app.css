@@ -8351,7 +8351,6 @@ button.close {
 }
 
 .active {
-  padding-left: 10px;
   background-color: darkgray;
   color: black;
 }
@@ -8363,7 +8362,6 @@ button.close {
 }
 
 .project:hover {
-  padding-left: 10px;
   background-color: darkgray;
   color: black;
 }

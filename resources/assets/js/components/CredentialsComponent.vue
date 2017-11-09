@@ -1,21 +1,22 @@
 <template>
     <div class="row">
         <div class="col-sm-6">
-            <div v-for="(credential, index) in credentials" class="pt5 pb5 project"
-                 v-bind:class="{ active: isActive(credential.id) }">
-                <span class="cursor-pointer"
-                      v-on:click="selectedCredential(index)">{{ credential.name }}: {{ credential.value }}</span>
+            <div v-for="(credential, index) in credentials" class="cursor-pointer"
+                 v-bind:class="{ active: isActive(credential.id) }" v-on:click="selectedCredential(index)">
+                <span><strong>{{ credential.name }}</strong></span><br/>
+                <span>{{ credential.value }}</span>
+                <hr style="margin-bottom: 0;margin-top: 0">
             </div>
         </div>
 
         <!-- Modal Create -->
-        <div class="modal fade" tabindex="-1" role="dialog" id="add_credential_model">
+        <div class="modal fade" tabindex="-1" role="dialog" id="add_credentials_model">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Crea una nuova properietà</h4>
+                        <h4 class="modal-title">Crea una nuova credenziale</h4>
                     </div>
                     <div class="modal-body">
 
@@ -26,13 +27,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="nome">Nome properietà:</label>
+                            <label for="nome">Nome credenziale:</label>
                             <input type="text" class="form-control" v-model="credential.name">
                         </div>
                         <div class="form-group">
-                            <label for="descrizione">Descrizione:</label>
-                            <textarea cols="30" rows="5" class="form-control"
-                                      v-model="credential.description"></textarea>
+                            <label for="valore">Valore credenziale:</label>
+                            <input type="text" class="form-control" v-model="credential.value">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -44,13 +44,13 @@
         </div><!-- /.modal -->
 
         <!-- Modal Update -->
-        <div class="modal fade" tabindex="-1" role="dialog" id="update_credential_model">
+        <div class="modal fade" tabindex="-1" role="dialog" id="update_credentials_model">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                 aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title">Modifica proprietà</h4>
+                        <h4 class="modal-title">Modifica credenziale</h4>
                     </div>
                     <div class="modal-body">
 
@@ -61,13 +61,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="nome">Nome proprietà:</label>
+                            <label for="nome">Nome credenziale:</label>
                             <input type="text" class="form-control" v-model="update_credential.name">
                         </div>
                         <div class="form-group">
-                            <label for="descrizione">Descrizione:</label>
-                            <textarea cols="30" rows="5" class="form-control"
-                                      v-model="update_credential.description"></textarea>
+                            <label for="descrizione">valore credenziale:</label>
+                            <input type="text" class="form-control" v-model="update_credential.value">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -99,25 +98,24 @@
             createCredential() {
                 axios.post('credential', {
                     name: this.credential.name,
-                    description: this.credential.description,
-                    project_id: this.$parent.update_project.id
+                    value: this.credential.value,
+                    property_id: this.$parent.update_property.id
                 })
                     .then(response => {
                         this.reset();
-                        this.properties.push(response.data.credential);
-                        this.$parent.message = response.data.message;
-                        $("#add_credential_model").modal("hide");
+                        this.credentials.push(response.data.credential);
+                        this.$parent.$parent.renderSuccessMessage(response.data.message);
+                        $("#add_credentials_model").modal("hide");
                     })
                     .catch(error => {
-                        console.log(error.response);
                         this.errors = [];
 
                         if (error.response.data.errors.name) {
                             this.errors.push(error.response.data.errors.name[0]);
                         }
 
-                        if (error.response.data.errors.description) {
-                            this.errors.push(error.response.data.errors.description[0]);
+                        if (error.response.data.errors.value) {
+                            this.errors.push(error.response.data.errors.value[0]);
                         }
                     });
             },
@@ -127,8 +125,8 @@
                     value: this.update_credential.value,
                 })
                     .then(response => {
-                        this.$parent.message = response.data.message;
-                        $("#update_credential_model").modal("hide");
+                        this.$parent.$parent.renderSuccessMessage(response.data.message);
+                        $("#update_credentials_model").modal("hide");
                     })
                     .catch(error => {
                         this.errors = [];
@@ -142,12 +140,12 @@
                     });
             },
             deleteCredential() {
-                let conf = confirm("Vuoi cancellare questa proprietà?");
+                let conf = confirm("Vuoi cancellare questa credenziale?");
                 if (conf === true) {
                     axios.delete('credential/' + this.update_credential.id)
                         .then(response => {
-                            this.properties.splice(this.update_credential_index, 1);
-                            this.$parent.message = response.data.message;
+                            this.credentials.splice(this.update_credential_index, 1);
+                            this.$parent.$parent.renderSuccessMessage(response.data.message);
                         })
                         .catch(error => {
                         });
@@ -165,13 +163,10 @@
                 }
                 return false;
             },
-            initSelectCredential(index) {
-                this.errors = [];
-                this.update_crede_index = index;
-                this.update_credential = this.credentials[index];
-            },
             selectedCredential(index) {
-                this.initSelectCredential(index);
+                this.errors = [];
+                this.update_credential_index = index;
+                this.update_credential = this.credentials[index];
             },
         }
     }

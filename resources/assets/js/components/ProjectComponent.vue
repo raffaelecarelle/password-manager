@@ -37,14 +37,15 @@
                                 <a class="btn btn-danger" href="#" @click="initDeleteProperty()"
                                    v-bind:class="{disabled: disableButtonProperty}"><i class="icon-remove"></i></a>
                             </div>
-                            <!--<div class="col-sm-4" v-if="disableButtonProperty">-->
-                                <!--<a class="btn btn-primary" href="#" data-toggle="modal"-->
-                                   <!--data-target="#add_credentials_model"><i class="icon-plus"></i></a>-->
-                                <!--<a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_credential_model"-->
-                                   <!--v-bind:class="{disabled: disableButtonProperty}"><i class="icon-pencil"></i></a>-->
-                                <!--<a class="btn btn-danger" href="#" @click="deleteProject()"-->
-                                   <!--v-bind:class="{disabled: disableButtonProperty}"><i class="icon-remove"></i></a>-->
-                            <!--</div>-->
+                            <div class="col-sm-4" v-if="this.showButtonCredentials">
+                                <a class="btn btn-primary" href="#" data-toggle="modal"
+                                   data-target="#add_credentials_model"><i class="icon-plus"></i></a>
+                                <a class="btn btn-info" href="#" data-toggle="modal"
+                                   data-target="#update_credentials_model"
+                                   v-bind:class="{disabled: disableButtonCredential}"><i class="icon-pencil"></i></a>
+                                <a class="btn btn-danger" href="#" @click="initDeleteCredential()"
+                                   v-bind:class="{disabled: disableButtonCredential}"><i class="icon-remove"></i></a>
+                            </div>
                         </div>
                     </div>
 
@@ -54,10 +55,11 @@
                                 <input type="text" name="project" placeholder="Cerca..." class="form-control mb20"
                                        v-model="searchProject" v-on:keyup="fillProjectsList"/>
                                 <span v-if="!projects.length">Nessun risultato</span>
-                                <div v-for="(project, index) in projects" class="pt5 pb5 project"
+                                <div v-for="(project, index) in projects" class="pt5 project cursor-pointer"
+                                     v-on:click="selectedProject(index)"
                                      v-bind:class="{ active: isActive(project.id) }">
-                                    <span class="cursor-pointer"
-                                          v-on:click="selectedProject(index)">{{project.name}}</span>
+                                    <span>{{project.name}}</span>
+                                    <hr class="mt0 mb0">
                                 </div>
                             </div>
 
@@ -158,7 +160,13 @@
                 message: '',
                 update_project: {},
                 update_project_index: "",
-                properties: []
+                properties: [],
+                showButtonCredentials: false
+            }
+        },
+        updated: function () {
+            if (typeof this.$refs.properties !== 'undefined') {
+                return this.showButtonCredentials = Object.keys(this.$refs.properties.update_property).length > 0
             }
         },
         computed: {
@@ -168,6 +176,9 @@
             ,
             disableButtonProperty: function () {
                 return Object.keys(this.$refs.properties.update_property).length == 0
+            },
+            disableButtonCredential: function () {
+                return Object.keys(this.$refs.properties.$refs.credentials.update_credential).length == 0
             }
         },
         methods: {
@@ -191,10 +202,6 @@
                         if (error.response.data.errors.name) {
                             this.errors.push(error.response.data.errors.name[0]);
                         }
-
-                        if (error.response.data.errors.description) {
-                            this.errors.push(error.response.data.errors.description[0]);
-                        }
                     });
             }
             ,
@@ -210,17 +217,13 @@
                     description: this.update_project.description,
                 })
                     .then(response => {
-                        this.message = response.data.message;
+                        this.renderSuccessMessage(response.data.message);
                         $("#update_project_model").modal("hide");
                     })
                     .catch(error => {
                         this.errors = [];
                         if (error.response.data.errors.name) {
                             this.errors.push(error.response.data.errors.name[0]);
-                        }
-
-                        if (error.response.data.errors.description) {
-                            this.errors.push(error.response.data.errors.description[0]);
                         }
                     });
             }
@@ -232,6 +235,7 @@
                         .then(response => {
                             this.projects.splice(this.update_project_index, 1);
                             this.reset();
+                            this.renderSuccessMessage(response.data.message);
                         })
                         .catch(error => {
                         });
@@ -282,6 +286,9 @@
             ,
             initDeleteProperty() {
                 return this.$refs.properties.deleteProperty();
+            },
+            initDeleteCredential() {
+                return this.$refs.properties.$refs.credentials.deleteCredential();
             }
         }
     }

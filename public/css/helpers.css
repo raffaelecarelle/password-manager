@@ -2,6 +2,14 @@
     width: 100%;
 }
 
+.mt0 {
+    margin-top: 0;
+}
+
+.mb0 {
+    margin-bottom: 0;
+}
+
 .mt20 {
     margin-top: 20px;
 }
@@ -16,6 +24,14 @@
 
 .pb5 {
     padding-bottom: 5px;
+}
+
+.mb5 {
+    margin-bottom: 5px;
+}
+
+.mt5 {
+    margin-top: 5px;
 }
 
 .cursor-pointer {

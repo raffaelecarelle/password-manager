@@ -113,6 +113,10 @@
         public function destroy (Project $project)
         {
             $project->delete();
+
+            return response()->json([
+                'message' => 'Progetto cancellato con successo!'
+            ], 200);
         }
 
         public function getProperties ($project_id)

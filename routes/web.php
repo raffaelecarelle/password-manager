@@ -30,4 +30,6 @@
         Route::resource('property', 'PropertyController');
         Route::get('credential/{propertyId}/list', 'PropertyController@getCredentials');
 
+        Route::resource('credential', 'CredentialController');
+
     });

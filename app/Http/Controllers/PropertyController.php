@@ -100,6 +100,7 @@
         public function destroy (Property $property)
         {
             $property->delete();
+
             return response()->json([
                 'message' => 'Properietà cancellata con successo!'
             ], 200);

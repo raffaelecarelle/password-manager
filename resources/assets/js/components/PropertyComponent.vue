@@ -1,12 +1,13 @@
 <template>
     <div class="row">
         <div class="col-sm-6">
-            <div v-for="(property, index) in properties" class="pt5 pb5 project"
+            <div v-for="(property, index) in properties" class="pt5 project cursor-pointer" v-on:click="selectedProperty(index)"
                  v-bind:class="{ active: isActive(property.id) }">
-                <span class="cursor-pointer" v-on:click="selectedProperty(index)">{{property.name}}</span>
+                <span>{{property.name}}</span>
+                <hr class="mt0 mb0">
             </div>
         </div>
-
+  
         <!-- Modal Create -->
         <div class="modal fade" tabindex="-1" role="dialog" id="add_property_model">
             <div class="modal-dialog" role="document">
@@ -107,19 +108,14 @@
                     .then(response => {
                         this.reset();
                         this.properties.push(response.data.property);
-                        this.$parent.message = response.data.message;
+                        this.$parent.renderSuccessMessage(response.data.message);
                         $("#add_property_model").modal("hide");
                     })
                     .catch(error => {
-                        console.log(error.response);
                         this.errors = [];
 
                         if (error.response.data.errors.name) {
                             this.errors.push(error.response.data.errors.name[0]);
-                        }
-
-                        if (error.response.data.errors.description) {
-                            this.errors.push(error.response.data.errors.description[0]);
                         }
                     });
             },
@@ -129,17 +125,13 @@
                     description: this.update_property.description,
                 })
                     .then(response => {
-                        this.$parent.message = response.data.message;
+                        this.$parent.renderSuccessMessage(response.data.message);
                         $("#update_property_model").modal("hide");
                     })
                     .catch(error => {
                         this.errors = [];
                         if (error.response.data.errors.name) {
                             this.errors.push(error.response.data.errors.name[0]);
-                        }
-
-                        if (error.response.data.errors.description) {
-                            this.errors.push(error.response.data.errors.description[0]);
                         }
                     });
             },
@@ -149,7 +141,7 @@
                     axios.delete('property/' + this.update_property.id)
                         .then(response => {
                             this.properties.splice(this.update_property_index, 1);
-                            this.$parent.message = response.data.message;
+                            this.$parent.renderSuccessMessage(response.data.message);
                         })
                         .catch(error => {
                         });

@@ -1,14 +1,20 @@
+<span><div data-id="74" class="notification-wrapper" style="transition: all 300ms;"><div class="custom-template"><div
+        class="custom-template-icon"><i class="icon ion-android-checkmark-circle"></i></div> <div
+        class="custom-template-content"><div class="custom-template-title">
+            Test  notification #74
+          </div> <div class="custom-template-text">This is notification text!<br>Date: Thu Nov 09 2017 11:49:13 GMT+0100 (CET)</div></div> <div
+        class="custom-template-close"><i class="icon ion-android-close"></i></div></div></div></span>
+
 <template>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
 
-                <div class="alert alert-success alert-dismissable" v-if="message">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <ul>
-                        <li>{{ message }}</li>
-                    </ul>
-                </div>
+                <notifications group="notifications"
+                               position="top center"
+                               animation-type="velocity"
+                               width="100%">
+                </notifications>
 
                 <div class="panel panel-default">
 
@@ -31,14 +37,14 @@
                                 <a class="btn btn-danger" href="#" @click="initDeleteProperty()"
                                    v-bind:class="{disabled: disableButtonProperty}"><i class="icon-remove"></i></a>
                             </div>
-                            <div class="col-sm-4" v-if="false">
-                                <a class="btn btn-primary" href="#" data-toggle="modal"
-                                   data-target="#add_project_model"><i class="icon-plus"></i></a>
-                                <a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_project_model"
-                                   v-bind:class="{disabled: disableButtonCredential}"><i class="icon-pencil"></i></a>
-                                <a class="btn btn-danger" href="#" @click="deleteProject()"
-                                   v-bind:class="{disabled: disableButtonCredential}"><i class="icon-remove"></i></a>
-                            </div>
+                            <!--<div class="col-sm-4" v-if="disableButtonProperty">-->
+                                <!--<a class="btn btn-primary" href="#" data-toggle="modal"-->
+                                   <!--data-target="#add_credentials_model"><i class="icon-plus"></i></a>-->
+                                <!--<a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_credential_model"-->
+                                   <!--v-bind:class="{disabled: disableButtonProperty}"><i class="icon-pencil"></i></a>-->
+                                <!--<a class="btn btn-danger" href="#" @click="deleteProject()"-->
+                                   <!--v-bind:class="{disabled: disableButtonProperty}"><i class="icon-remove"></i></a>-->
+                            <!--</div>-->
                         </div>
                     </div>
 
@@ -158,7 +164,8 @@
         computed: {
             disableButtonProject: function () {
                 return Object.keys(this.update_project).length == 0
-            },
+            }
+            ,
             disableButtonProperty: function () {
                 return Object.keys(this.$refs.properties.update_property).length == 0
             }
@@ -166,21 +173,21 @@
         methods: {
             isActive(projectId) {
                 return projectId == this.update_project.id;
-            },
+            }
+            ,
             createProject() {
                 axios.post('project', {
                     name: this.project.name,
                     description: this.project.description,
                 })
                     .then(response => {
-                        this.reset();
                         this.projects.push(response.data.project);
-                        this.message = response.data.message;
+                        this.renderSuccessMessage(response.data.message);
                         $("#add_project_model").modal("hide");
+                        this.project = {};
                     })
                     .catch(error => {
                         this.errors = [];
-                        console.log(error);
                         if (error.response.data.errors.name) {
                             this.errors.push(error.response.data.errors.name[0]);
                         }
@@ -189,12 +196,14 @@
                             this.errors.push(error.response.data.errors.description[0]);
                         }
                     });
-            },
+            }
+            ,
             initSelectProject(index) {
                 this.errors = [];
                 this.update_project_index = index;
                 this.update_project = this.projects[index];
-            },
+            }
+            ,
             updateProject() {
                 axios.patch('project/' + this.update_project.id, {
                     name: this.update_project.name,
@@ -214,44 +223,63 @@
                             this.errors.push(error.response.data.errors.description[0]);
                         }
                     });
-            },
+            }
+            ,
             deleteProject() {
                 let conf = confirm("Vuoi cancellare questo progetto?");
                 if (conf === true) {
                     axios.delete('project/' + this.update_project.id)
                         .then(response => {
                             this.projects.splice(this.update_project_index, 1);
+                            this.reset();
                         })
                         .catch(error => {
                         });
                 }
-            },
+            }
+            ,
             reset() {
                 this.update_project = [];
                 this.update_project_index = "";
                 this.$refs.properties.update_property = [];
                 this.$refs.properties.update_property_index = "";
+                this.$refs.properties.credentials = [];
                 this.project.name = '';
                 this.project.description = '';
-            },
+                this.properties = [];
+            }
+            ,
+            renderSuccessMessage(message) {
+                this.$notify({
+                    group: 'notifications',
+                    title: 'SUCCESS!',
+                    text: '<i class="fa fa-check"></i>' + message,
+                    type: 'success',
+                    width: '100%'
+                });
+            }
+            ,
             selectedProject(index) {
                 this.reset();
                 this.initSelectProject(index);
                 this.getProperties(this.update_project.id);
-            },
+            }
+            ,
             getProperties(projectId) {
                 axios.get('property/' + projectId + '/list').then((response) => {
                     this.properties = response.data.properties;
                 }).catch(error => {
                     console.log(error.response);
                 });
-            },
+            }
+            ,
             fillProjectsList() {
                 axios.get('project?q=' + this.searchProject).then((response) => {
                     this.reset();
                     response.error ? this.errors = response.error : this.projects = response.data.projects;
                 });
-            },
+            }
+            ,
             initDeleteProperty() {
                 return this.$refs.properties.deleteProperty();
             }

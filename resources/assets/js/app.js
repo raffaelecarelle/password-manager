@@ -19,6 +19,11 @@ Vue.component('project-component', require('./components/ProjectComponent.vue'))
 Vue.component('properties', require('./components/PropertyComponent.vue'));
 Vue.component('credentials', require('./components/CredentialsComponent.vue'));
 
+import Notifications from 'vue-notification'
+import velocity      from 'velocity-animate'
+
+Vue.use(Notifications, { velocity });
+
 const app = new Vue({
     el: '#app'
 });

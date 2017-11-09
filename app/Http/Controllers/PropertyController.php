@@ -100,5 +100,18 @@
         public function destroy (Property $property)
         {
             $property->delete();
+            return response()->json([
+                'message' => 'Properietà cancellata con successo!'
+            ], 200);
+        }
+
+        public function getCredentials ($id)
+        {
+            $property = Property::find($id);
+            $credentials = $property->credentials()->get();
+
+            return response()->json([
+                'credentials' => $credentials
+            ], 200);
         }
     }

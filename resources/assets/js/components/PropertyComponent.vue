@@ -77,7 +77,7 @@
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
-        <credentials></credentials>
+        <credentials ref="credentials" :credentials="this.credentials"></credentials>
     </div>
 </template>
 
@@ -93,7 +93,8 @@
                 },
                 errors: [],
                 update_property: {},
-                update_property_index: ""
+                update_property_index: "",
+                credentials: []
             }
         },
         methods: {
@@ -148,16 +149,27 @@
                     axios.delete('property/' + this.update_property.id)
                         .then(response => {
                             this.properties.splice(this.update_property_index, 1);
+                            this.$parent.message = response.data.message;
                         })
                         .catch(error => {
                         });
                 }
+            },
+            getCredentials(propertyId) {
+                axios.get('credential/' + propertyId + '/list').then((response) => {
+                    this.credentials = response.data.credentials;
+                }).catch(error => {
+                    console.log(error.response);
+                });
             },
             reset() {
                 this.properties.update_property = [];
                 this.properties.update_property_index = "";
                 this.property.name = '';
                 this.property.description = '';
+                this.credentials = [];
+                this.$refs.credentials.update_credential = [];
+                this.$refs.credentials.update_credential_index = "";
             },
             isActive(propertyId) {
                 if (Object.keys(this.update_property).length > 0) {
@@ -165,14 +177,15 @@
                 }
                 return false;
             },
-            initSelectProject(index) {
+            initSelectProperty(index) {
                 this.errors = [];
                 this.update_property_index = index;
                 this.update_property = this.properties[index];
             },
             selectedProperty(index) {
-                this.initSelectProject(index);
-                //this.getCredential(this.update_project.id);
+                this.reset();
+                this.initSelectProperty(index);
+                this.getCredentials(this.update_property.id);
             },
         }
     }

@@ -140,6 +140,7 @@
                 if (conf === true) {
                     axios.delete('property/' + this.update_property.id)
                         .then(response => {
+                            this.reset();
                             this.properties.splice(this.update_property_index, 1);
                             this.$parent.renderSuccessMessage(response.data.message);
                         })
@@ -155,8 +156,8 @@
                 });
             },
             reset() {
-                this.properties.update_property = [];
-                this.properties.update_property_index = "";
+                this.update_property = [];
+                this.update_property_index = "";
                 this.property.name = '';
                 this.property.description = '';
                 this.credentials = [];

@@ -43790,6 +43790,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             var conf = confirm("Vuoi cancellare questa proprietà?");
             if (conf === true) {
                 axios.delete('property/' + this.update_property.id).then(function (response) {
+                    _this3.reset();
                     _this3.properties.splice(_this3.update_property_index, 1);
                     _this3.$parent.renderSuccessMessage(response.data.message);
                 }).catch(function (error) {});
@@ -43805,8 +43806,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             });
         },
         reset: function reset() {
-            this.properties.update_property = [];
-            this.properties.update_property_index = "";
+            this.update_property = [];
+            this.update_property_index = "";
             this.property.name = '';
             this.property.description = '';
             this.credentials = [];

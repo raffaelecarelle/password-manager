@@ -1,20 +1,7 @@
-<span><div data-id="74" class="notification-wrapper" style="transition: all 300ms;"><div class="custom-template"><div
-        class="custom-template-icon"><i class="icon ion-android-checkmark-circle"></i></div> <div
-        class="custom-template-content"><div class="custom-template-title">
-            Test  notification #74
-          </div> <div class="custom-template-text">This is notification text!<br>Date: Thu Nov 09 2017 11:49:13 GMT+0100 (CET)</div></div> <div
-        class="custom-template-close"><i class="icon ion-android-close"></i></div></div></div></span>
-
 <template>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-
-                <notifications group="notifications"
-                               position="top center"
-                               animation-type="velocity"
-                               width="100%">
-                </notifications>
 
                 <div class="panel panel-default">
 
@@ -24,7 +11,7 @@
                                 <a class="btn btn-primary" href="#" data-toggle="modal"
                                    data-target="#add_project_model"><i class="icon-plus"></i></a>
                                 <a class="btn btn-info" href="#" data-toggle="modal" data-target="#update_project_model"
-                                   v-bind:class="{disabled: disableButtonProject}"><i class="icon-pencil"></i></a>
+                                       v-bind:class="{disabled: disableButtonProject}"><i class="icon-pencil"></i></a>
                                 <a class="btn btn-danger" href="#" @click="deleteProject()"
                                    v-bind:class="{disabled: disableButtonProject}"><i class="icon-remove"></i></a>
                             </div>
@@ -91,11 +78,11 @@
 
                             <div class="form-group">
                                 <label for="nome">Nome progetto:</label>
-                                <input type="text" class="form-control" v-model="project.name">
+                                <input id="nome" type="text" class="form-control" v-model="project.name">
                             </div>
                             <div class="form-group">
                                 <label for="descrizione">Descrizione:</label>
-                                <textarea cols="30" rows="5" class="form-control"
+                                <textarea id="descrizione" cols="30" rows="5" class="form-control"
                                           v-model="project.description"></textarea>
                             </div>
                         </div>
